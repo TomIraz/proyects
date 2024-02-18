@@ -1,0 +1,10 @@
+[masters]
+control ansible_connection=local
+
+[nodes]
+node1
+node2
+
+[stack:children]
+masters
+nodes

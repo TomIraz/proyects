@@ -1,0 +1,57 @@
+Vagrant.configure("2") do |config|
+  servers = [
+    {
+      :hostname => "node2",
+      :box => "bento/ubuntu-22.04",
+      :ip => "192.168.56.4",
+      :ssh_port => '2202'
+    },
+    {
+      :hostname => "node1",
+      :box => "bento/ubuntu-22.04",
+      :ip => "192.168.56.3",
+      :ssh_port => '2201'
+    },
+    {
+      :hostname => "control",
+      :box => "bento/ubuntu-22.04",
+      :ip => "192.168.56.2",
+      :ssh_port => '2200'
+    }
+  ]
+
+  servers.each do |server|
+    config.vm.define server[:hostname] do |node|
+      node.vm.box = server[:box]
+        node.vm.hostname = server[:hostname]
+          node.vm.network :private_network, ip: server[:ip]
+          node.vm.network "forwarded_port", guest: 22, host: server[:ssh_port], id: "ssh"
+          node.vm.provider :virtualbox do |vb|
+            if server[:hostname] == "control"
+              vb.customize ["modifyvm", :id, "--memory", 4000]
+              vb.customize ["modifyvm", :id, "--cpus", 2]
+            else
+              vb.customize ["modifyvm", :id, "--memory", 4000]
+              vb.customize ["modifyvm", :id, "--cpus", 1]
+            end
+          end
+          
+      if server[:hostname] == "control"
+        node.vm.provision "shell", inline: <<-SHELL
+            sudo cp /vagrant/hosts /etc/hosts
+            sudo apt-get update
+            sudo apt-get install -y ansible sshpass
+            ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa <<< y >/dev/null 2>&1
+            
+            # Aceptar automáticamente las claves de host de node1 y node2
+            ssh-keyscan 192.168.56.3 192.168.56.4 >> ~/.ssh/known_hosts
+            
+            # Copiar la clave SSH a las otras máquinas usando sshpass
+            sshpass -p "vagrant" ssh-copy-id -o StrictHostKeyChecking=no vagrant@192.168.56.3
+            sshpass -p "vagrant" ssh-copy-id -o StrictHostKeyChecking=no vagrant@192.168.56.4
+        SHELL
+      end
+    end
+  end
+end
+
