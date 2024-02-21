@@ -1,0 +1,21 @@
+- hosts: all
+  become: yes
+  roles:
+    - k8s
+    - commons
+  tags:
+    - all
+
+- hosts: masters
+  become: yes
+  roles:
+    - k8s
+  tags:
+    - masters
+
+- hosts: nodes
+  become: yes
+  roles:
+    - k8s
+  tags:
+    - nodes

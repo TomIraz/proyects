@@ -1,0 +1,15 @@
+---
+- name: install all tools for K8s
+  include: install-k8s.yaml
+  tags:
+    - all
+
+- name: Initialize and configure all master nodes
+  include: init-master.yaml
+  tags:
+    - masters
+
+- name: Initialize and configure all worker nodes
+  include: init-nodes.yaml
+  tags:
+    - nodes

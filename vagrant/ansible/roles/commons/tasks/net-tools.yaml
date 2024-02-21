@@ -1,0 +1,15 @@
+- name: install net-utils
+  apt:
+    update_cache: yes
+    pkg:
+    - net-tools
+    - iproute2
+    - tcpdump
+    - nmap
+    - iftop
+    - iptraf
+    - iperf3
+    - tshark
+    - traceroute
+    - telnet
+    state: present

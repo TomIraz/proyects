@@ -1,0 +1,5 @@
+---
+- name: Instal net tools
+  include: net-tools
+  tags: 
+    - all

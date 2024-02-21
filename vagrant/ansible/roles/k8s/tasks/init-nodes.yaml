@@ -1,0 +1,8 @@
+---
+- name: get token
+  shell: kubeadm token create --print-join-command
+  delegate_to: "control"
+  register: join_command
+
+- name: Unir el nodo al clúster usando el token
+  shell: "{{ join_command.stdout }}"
