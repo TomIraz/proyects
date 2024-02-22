@@ -3,8 +3,6 @@
   apt:
     update_cache: yes
     upgrade: 'yes'
-  tags: 
-    - update
     
 - name: Disable Swap
   shell: |
