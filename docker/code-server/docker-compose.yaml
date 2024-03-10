@@ -17,7 +17,7 @@ services:
       - config:/config
       - /home/tom-server/proyectos:/proyectos
     ports:
-      - 8443:8443
+      - 8083:8443
     restart: unless-stopped
 
 volumes:
